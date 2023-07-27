@@ -4,18 +4,22 @@ const jwt = require('jsonwebtoken');
 
 const verifyToken = (req, res, next) => {
     try {
-        const token = req.headers.authorization.split(" ")[1];
+        const ensureToken = req.headers.authorization;
+        if (!ensureToken) {
+            return res.status(404).json({ error: "Authorization token is necessary" });
+        }
+        const token = ensureToken.split(" ")[1];
         if (token) {
             const isVerified = jwt.verify(token, "this is secret key");
             if (isVerified) {
                 req.user = isVerified;
                 next();
             } else {
-                res.status(401).json({ error: "Incorrect token" });
+                return res.status(401).json({ error: "Incorrect token" });
             }
         }
     } catch (error) {
-        res.status(401).json({ error: error.message });
+        return res.status(401).json({ error: error.message });
     }
 
 }
