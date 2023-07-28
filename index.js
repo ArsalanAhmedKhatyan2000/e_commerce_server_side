@@ -8,6 +8,7 @@ const usersRoute = require('./routes/user_router');
 const productsRoute = require('./routes/product_router');
 const cartsRoute = require('./routes/cart_router');
 const favoritesRoute = require('./routes/favorites_route');
+const ordersRoute = require('./routes/orders_router');
 const app = express();
 
 //middleware
@@ -19,6 +20,7 @@ app.use('/users', usersRoute);
 app.use('/products', productsRoute);
 app.use('/carts', cartsRoute);
 app.use('/favorites', favoritesRoute);
+app.use('/order', ordersRoute);
 
 //DB connectivity
 dbConnectivity();
