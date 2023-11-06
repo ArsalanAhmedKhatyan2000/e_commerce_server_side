@@ -9,6 +9,8 @@ async function addProduct(req, res) {
             productImage: req.body.productImage,
             description: req.body.description,
             category: req.body.category,
+            // unit: req.body.unit,
+            subCategory: req.body.subCategory,
             regularPrice: req.body.regularPrice,
             discountedPrice: req.body.discountedPrice,
             isActive: req.body.isActive
@@ -28,6 +30,7 @@ async function getAllProducts(req, res) {
         return res.status(500).json({ error: 'Internal server error' });
     }
 }
+
 async function deleteProduct(req, res) {
     try {
         const deletedProduct = await ProductModel.findByIdAndDelete(req.params.productID, { new: true });
@@ -51,6 +54,7 @@ async function updateProduct(req, res) {
                 category: req.body.category ?? existingProductData.category,
                 regularPrice: req.body.regularPrice ?? existingProductData.regularPrice,
                 discountedPrice: req.body.discountedPrice ?? existingProductData.discountedPrice,
+                // unit: req.body.unit ?? existingProductData.unit,
                 isActive: req.body.isActive ?? existingProductData.isActive,
             };
             const response = await ProductModel.findByIdAndUpdate(req.body.id, productUpdatedModel, { new: true });
@@ -61,4 +65,65 @@ async function updateProduct(req, res) {
         return res.status(500).json({ error: 'Internal server error' });
     }
 }
-module.exports = { addProduct, getAllProducts, deleteProduct, updateProduct };
+
+async function searchOptions(req, res) {
+    try {
+        const searchingText = req.params.searchingText;
+        const listOfProducts = await ProductModel.find({
+            productName: { $regex: searchingText, $options: 'i' }, // 'i' makes it case-insensitive
+        });
+        var listOfOptions = [];
+        listOfProducts.map((value) => {
+            listOfOptions.push(value["productName"]);
+        });
+        return res.status(200).json(listOfOptions);
+    } catch (error) {
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+async function searchProducts(req, res) {
+    try {
+        let page = req.params.page ?? 1;
+        const searchedText = req.params.searchedText;
+        let limit = 5;
+        if (searchedText == null) {
+            return res.status(400).json({ error: "Search text is required" });
+        }
+        const listOfProducts = await ProductModel.find({
+            productName: { $regex: searchedText, $options: 'i' }, // 'i' makes it case-insensitive
+        }).skip((page * limit) - limit).limit(limit);
+        // const listOfProducts = await ProductModel.find().skip((page * limit) - limit).limit(limit);
+        return res.status(200).json(listOfProducts);
+    } catch (error) {
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+}
+async function discountedProducts(req, res) {
+    try {
+        let page = req.params.page ?? 1;
+        let limit = 5;
+        console.log("page " + page);
+        // { $ne: null }
+        const listOfProducts = await ProductModel.find({ discountedPrice: { $eq: null } }).skip((page * limit) - limit).limit(limit);
+        return res.status(200).json(listOfProducts);
+
+    } catch (error) {
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+}
+async function getProductsByCategory(req, res) {
+    try {
+        let page = req.params.page ?? 1;
+        let subCategory = req.params.subCategory;
+        let limit = 5;
+        console.log("page " + page);
+        // { $ne: null }
+        const listOfProducts = await ProductModel.find({ subCategory: { $eq: subCategory } }).skip((page * limit) - limit).limit(limit);
+        return res.status(200).json(listOfProducts);
+
+    } catch (error) {
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+}
+module.exports = { addProduct, getAllProducts, deleteProduct, updateProduct, searchProducts, discountedProducts, getProductsByCategory, searchOptions };
