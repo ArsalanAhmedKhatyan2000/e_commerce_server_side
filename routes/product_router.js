@@ -11,5 +11,6 @@ route.get('/:searchedText/:page', searchProducts);
 route.get('/discountedProducts/page/:page', discountedProducts);
 route.get('/productsByCategory/:subCategory/:page', getProductsByCategory);
 route.get('/:searchingText', searchOptions);
+// route.put("/addBrand", addBrand);
 
 module.exports = route;

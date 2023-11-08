@@ -13,6 +13,7 @@ async function addProduct(req, res) {
             subCategory: req.body.subCategory,
             regularPrice: req.body.regularPrice,
             discountedPrice: req.body.discountedPrice,
+            brand: req.body.brand,
             isActive: req.body.isActive
         });
         const createdProdct = await ProductModel.create(product);
@@ -52,9 +53,11 @@ async function updateProduct(req, res) {
                 productImage: req.body.productImage ?? existingProductData.productImage,
                 description: req.body.description ?? existingProductData.description,
                 category: req.body.category ?? existingProductData.category,
+                subCategory: req.body.subCategory ?? existingProductData.subCategory,
                 regularPrice: req.body.regularPrice ?? existingProductData.regularPrice,
                 discountedPrice: req.body.discountedPrice ?? existingProductData.discountedPrice,
                 // unit: req.body.unit ?? existingProductData.unit,
+                brand: req.body.brand ?? existingProductData.brand,
                 isActive: req.body.isActive ?? existingProductData.isActive,
             };
             const response = await ProductModel.findByIdAndUpdate(req.body.id, productUpdatedModel, { new: true });
@@ -65,7 +68,24 @@ async function updateProduct(req, res) {
         return res.status(500).json({ error: 'Internal server error' });
     }
 }
+// async function addBrand(req, res) {
+//     const listOfProducts = await ProductModel.find();
+//     for (var i = 0; i <= listOfProducts.length - 1; i++) {
+//         const productUpdatedModel = {
+//             productName: listOfProducts[i]["productName"],
+//             productImage: listOfProducts[i]["productImage"],
+//             description: listOfProducts[i]["description"],
+//             category: listOfProducts[i]["category"],
+//             subCategory: listOfProducts[i]["subCategory"],
+//             regularPrice: listOfProducts[i]["regularPrice"],
+//             discountedPrice: listOfProducts[i]["discountedPrice"],
+//             brand: listOfProducts[i]["brand"],
+//             isActive: listOfProducts[i]["isActive"],
+//         };
+//         const response = await ProductModel.findByIdAndUpdate(listOfProducts[i]["_id"].toString(), productUpdatedModel, { new: true });
+//     }
 
+// }
 async function searchOptions(req, res) {
     try {
         const searchingText = req.params.searchingText;
@@ -86,14 +106,13 @@ async function searchProducts(req, res) {
     try {
         let page = req.params.page ?? 1;
         const searchedText = req.params.searchedText;
-        let limit = 5;
+        let limit = 10;
         if (searchedText == null) {
             return res.status(400).json({ error: "Search text is required" });
         }
         const listOfProducts = await ProductModel.find({
             productName: { $regex: searchedText, $options: 'i' }, // 'i' makes it case-insensitive
         }).skip((page * limit) - limit).limit(limit);
-        // const listOfProducts = await ProductModel.find().skip((page * limit) - limit).limit(limit);
         return res.status(200).json(listOfProducts);
     } catch (error) {
         return res.status(500).json({ error: 'Internal server error' });
@@ -102,7 +121,7 @@ async function searchProducts(req, res) {
 async function discountedProducts(req, res) {
     try {
         let page = req.params.page ?? 1;
-        let limit = 5;
+        let limit = 10;
         console.log("page " + page);
         // { $ne: null }
         const listOfProducts = await ProductModel.find({ discountedPrice: { $eq: null } }).skip((page * limit) - limit).limit(limit);
@@ -116,7 +135,7 @@ async function getProductsByCategory(req, res) {
     try {
         let page = req.params.page ?? 1;
         let subCategory = req.params.subCategory;
-        let limit = 5;
+        let limit = 10;
         console.log("page " + page);
         // { $ne: null }
         const listOfProducts = await ProductModel.find({ subCategory: { $eq: subCategory } }).skip((page * limit) - limit).limit(limit);
