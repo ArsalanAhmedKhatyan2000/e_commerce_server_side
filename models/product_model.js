@@ -12,6 +12,7 @@ const productScheme = mongoose.Schema({
     regularPrice: { type: Number, required: true },
     discountedPrice: { type: Number, required: false, default: null },
     isActive: { type: Boolean, required: false, default: true },
+    isFeatured: { type: Boolean, required: false, default: false },
 }, { timestamps: true })
 
 module.exports = mongoose.model('products', productScheme);

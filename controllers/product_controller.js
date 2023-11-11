@@ -14,7 +14,8 @@ async function addProduct(req, res) {
             regularPrice: req.body.regularPrice,
             discountedPrice: req.body.discountedPrice,
             brand: req.body.brand,
-            isActive: req.body.isActive
+            isActive: req.body.isActive,
+            isFeatured: req.body.isFeatured,
         });
         const createdProdct = await ProductModel.create(product);
         return res.status(201).json(createdProdct);
@@ -59,6 +60,7 @@ async function updateProduct(req, res) {
                 // unit: req.body.unit ?? existingProductData.unit,
                 brand: req.body.brand ?? existingProductData.brand,
                 isActive: req.body.isActive ?? existingProductData.isActive,
+                isFeatured: req.body.isFeatured ?? existingProductData.isFeatured,
             };
             const response = await ProductModel.findByIdAndUpdate(req.body.id, productUpdatedModel, { new: true });
             return res.status(200).json({ message: "Product updated successfully" });
@@ -81,6 +83,7 @@ async function updateProduct(req, res) {
 //             discountedPrice: listOfProducts[i]["discountedPrice"],
 //             brand: listOfProducts[i]["brand"],
 //             isActive: listOfProducts[i]["isActive"],
+//             isFeatured: false,
 //         };
 //         const response = await ProductModel.findByIdAndUpdate(listOfProducts[i]["_id"].toString(), productUpdatedModel, { new: true });
 //     }
@@ -145,4 +148,12 @@ async function getProductsByCategory(req, res) {
         return res.status(500).json({ error: 'Internal server error' });
     }
 }
-module.exports = { addProduct, getAllProducts, deleteProduct, updateProduct, searchProducts, discountedProducts, getProductsByCategory, searchOptions };
+async function getFetauredProducts(req, res) {
+    try {
+        const listOfProducts = await ProductModel.find({ isFeatured: { $eq: true } });
+        return res.status(200).json(listOfProducts);
+    } catch (error) {
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+}
+module.exports = { addProduct, getAllProducts, deleteProduct, updateProduct, searchProducts, discountedProducts, getProductsByCategory, searchOptions, getFetauredProducts };
