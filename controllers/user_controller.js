@@ -14,30 +14,20 @@ async function signupUser(req, res) {
         bcrypt.genSalt(10, function (err, salt) {
             bcrypt.hash(req.body.password, salt, function (err, hashedPassword) {
                 const userData = userModel({
-                    name: req.body.name,
-                    email: req.body.email,
                     profilePic: req.body.profilePic,
+                    firstName: req.body.firstName,
+                    lastName: req.body.lastName,
+                    email: req.body.email,
                     password: hashedPassword,
-                    age: req.body.age,
+                    phoneNumber: req.body.phoneNumber,
+                    dob: req.body.dob,
                     gender: req.body.gender,
                     address: req.body.address,
                     type: req.body.type
                 });
                 userModel.create(userData)
                     .then((response) => {
-                        return res.status(201).json({
-                            _id: response.id,
-                            name: response.name,
-                            email: response.email,
-                            profilePic: response.profilePic,
-                            age: response.age,
-                            gender: response.gender,
-                            address: response.address,
-                            type: response.type,
-                            fcmToken: response.fcmToken,
-                            createdAt: response.createdAt,
-                            updatedAt: response.updatedAt
-                        });
+                        return res.status(201).json("Registeration completed successfully");
                     })
                     .catch((err) => {
                         return res.status(500).json({ error: err.message })
@@ -54,6 +44,7 @@ async function loginUser(req, res) {
     try {
         const { email, password } = req.body;
         const existingUser = await userModel.findOne({ email });
+        console.log(existingUser);
         if (existingUser) {
             const isPasswordMatched = await bcrypt.compare(password, existingUser.password);
             if (isPasswordMatched) {
@@ -68,17 +59,17 @@ async function loginUser(req, res) {
                 );
                 return res.status(200).json({
                     _id: existingUser.id,
-                    name: existingUser.name,
-                    email: existingUser.email,
                     profilePic: existingUser.profilePic,
-                    age: existingUser.age,
+                    firstName: existingUser.firstName,
+                    lastName: existingUser.lastName,
+                    email: existingUser.email,
+                    phoneNumber: existingUser.phoneNumber,
+                    dob: existingUser.dob,
                     gender: existingUser.gender,
                     address: existingUser.address,
                     type: existingUser.type,
                     token: token,
                     fcmToken: existingUser.fcmToken,
-                    createdAt: existingUser.createdAt,
-                    updatedAt: existingUser.updatedAt
                 });
             }
             return res.status(403).json({ error: "Incorrect password" })
