@@ -79,6 +79,7 @@ async function loginUser(req, res) {
         return res.status(500).json({ error: 'Internal server error' });
     }
 }
+
 async function getUserByID(req, res) {
     try {
         const user = await userModel.findById(req.params.id).select("-password -__v");
