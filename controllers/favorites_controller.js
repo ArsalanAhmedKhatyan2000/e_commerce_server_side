@@ -1,17 +1,24 @@
 
 const FavoriteModel = require('../models/favorites_model');
+const mongoose = require('mongoose');
+const ProductModel = require('../models/product_model');
 
 async function getFavorites(req, res) {
     try {
         const consumerID = req.user.id;
         const userFavorite = await FavoriteModel.findOne({ consumerID: consumerID });
-        if (userFavorite) {
-            return res.status(200).json(userFavorite.favoriteProducts);
+        var listOfProductIDs = [];
+        if (!userFavorite || userFavorite.favoriteProducts.length == 0) {
+            return res.status(200).json(listOfProductIDs);
         }
-        return res.status(404).json({ error: 'Favorite Products are not found' });
-
+        for (var i = 0; i <= userFavorite.favoriteProducts.length - 1; i++) {
+            var productID = userFavorite.favoriteProducts[i]['productID'];
+            listOfProductIDs.push(new mongoose.Types.ObjectId(productID)); //
+        }
+        const listOfProducts = await ProductModel.find({ '_id': listOfProductIDs });
+        return res.status(200).json(listOfProducts);
     } catch (error) {
-
+        return res.status(500).json({ error: 'Internal server error' });
     }
 }
 
