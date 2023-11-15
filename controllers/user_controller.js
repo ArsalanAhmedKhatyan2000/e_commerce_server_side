@@ -44,7 +44,6 @@ async function loginUser(req, res) {
     try {
         const { email, password } = req.body;
         const existingUser = await userModel.findOne({ email });
-        console.log(existingUser);
         if (existingUser) {
             const isPasswordMatched = await bcrypt.compare(password, existingUser.password);
             if (isPasswordMatched) {
@@ -80,6 +79,14 @@ async function loginUser(req, res) {
         return res.status(500).json({ error: 'Internal server error' });
     }
 }
+async function getUserByID(req, res) {
+    try {
+        const user = await userModel.findById(req.params.id).select("-password -__v");
+        return res.status(200).json(user);
+    } catch (error) {
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+}
 
 async function getAllUsers(req, res) {
     try {
@@ -89,14 +96,7 @@ async function getAllUsers(req, res) {
         return res.status(500).json({ error: 'Internal server error' });
     }
 }
-async function getUserByID(req, res) {
-    try {
-        const user = await userModel.findById(req.params.id).select("-password -__v");
-        return res.status(200).json(user);
-    } catch (error) {
-        return res.status(500).json({ error: 'Internal server error' });
-    }
-}
+
 
 async function changePassword(req, res) {
     try {
@@ -143,7 +143,6 @@ async function updateUser(req, res) {
 async function deleteUsers(req, res) {
     try {
         const deletedUser = await userModel.findByIdAndDelete(req.body.id, { new: true });
-        console.log("check : " + deletedUser);
         if (deletedUser) {
             return res.status(200).json({ message: "User deleted successfully" });
         }
@@ -156,7 +155,6 @@ async function deleteUsers(req, res) {
 async function updateFcmToken(req, res) {
     try {
         const updatedUser = await userModel.findByIdAndUpdate(req.user.id, { fcmToken: req.body.fcmToken }, { new: true }).select("-password -__v");
-        console.log("updatedUser : " + updatedUser);
         if (updatedUser) {
             return res.status(200).json(updatedUser);
         }

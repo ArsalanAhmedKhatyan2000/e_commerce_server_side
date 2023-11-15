@@ -36,7 +36,6 @@ async function getAllProducts(req, res) {
 async function deleteProduct(req, res) {
     try {
         const deletedProduct = await ProductModel.findByIdAndDelete(req.params.productID, { new: true });
-        console.log("deletedProduct : " + deletedProduct);
         if (deletedProduct) {
             return res.status(200).json({ message: "Product deleted successfully" });
         }
@@ -125,7 +124,6 @@ async function discountedProducts(req, res) {
     try {
         let page = req.params.page ?? 1;
         let limit = 10;
-        console.log("page " + page);
         // { $ne: null }
         const listOfProducts = await ProductModel.find({ discountedPrice: { $eq: null } }).skip((page * limit) - limit).limit(limit);
         return res.status(200).json(listOfProducts);
@@ -139,7 +137,6 @@ async function getProductsByCategory(req, res) {
         let page = req.params.page ?? 1;
         let subCategory = req.params.subCategory;
         let limit = 10;
-        console.log("page " + page);
         // { $ne: null }
         const listOfProducts = await ProductModel.find({ subCategory: { $eq: subCategory } }).skip((page * limit) - limit).limit(limit);
         return res.status(200).json(listOfProducts);
