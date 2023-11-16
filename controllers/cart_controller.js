@@ -84,7 +84,22 @@ async function clearCart(req, res) {
         return res.status(500).json({ error: 'Internal server error' });
     }
 }
+async function getCartProductsIDs(req, res) {
+    try {
+        const consumerID = req.user.id;
+        const userCart = await CartModel.findOne({ consumerID: consumerID });
+        var listOfProductIDs = [];
+        if (!userCart || userCart.products.length == 0) {
+            return res.status(200).json(listOfProductIDs);
+        }
+        for (var i = 0; i < userCart.products.length; i++) {
+            listOfProductIDs.push(userCart.products[i].productID);
+        }
+        return res.status(200).json(listOfProductIDs);
+    } catch (error) {
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+}
 
 
-
-module.exports = { addToCart, removeItemFromCart, getCart, clearCart };
+module.exports = { addToCart, removeItemFromCart, getCart, clearCart, getCartProductsIDs };
