@@ -96,15 +96,12 @@ async function clearFavorites(req, res) {
     try {
         const consumerID = req.user.id;
         const userFavorite = await FavoriteModel.findOne({ consumerID: consumerID });
-        if (userFavorite) {
-            if (userFavorite.favoriteProducts.length != 0) {
-                userFavorite.favoriteProducts = [];
-                await userFavorite.save();
-                return res.status(200).json(userFavorite.favoriteProducts);
-            }
+        if (!userFavorite || userFavorite.favoriteProducts.length == 0) {
             return res.status(400).json({ error: 'Favorite is already empty' });
         }
-        return res.status(404).json({ error: 'Favorite Products are not found' });
+        userFavorite.favoriteProducts = [];
+        await userFavorite.save();
+        return res.status(200).json(userFavorite.favoriteProducts);
     } catch (error) {
         return res.status(500).json({ error: 'Internal server error' });
     }
