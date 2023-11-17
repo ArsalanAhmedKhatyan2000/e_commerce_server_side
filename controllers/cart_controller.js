@@ -80,15 +80,12 @@ async function clearCart(req, res) {
     try {
         const consumerID = req.user.id;
         const userCart = await CartModel.findOne({ consumerID: consumerID });
-        if (userCart) {
-            if (userCart.products.length != 0) {
-                userCart.products = [];
-                await userCart.save();
-                return res.status(200).json(userCart.products);
-            }
+        if (!userCart || userCart.products.length == 0) {
             return res.status(400).json({ error: 'Cart is already empty' });
         }
-        return res.status(404).json({ error: 'Cart not found' });
+        userCart.products = [];
+        await userCart.save();
+        return res.status(200).json(userCart.products);
     } catch (error) {
         return res.status(500).json({ error: 'Internal server error' });
     }
