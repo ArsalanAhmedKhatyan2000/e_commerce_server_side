@@ -1,14 +1,23 @@
 
 const CartModel = require('../models/cart_model');
+const ProductModel = require('../models/product_model');
 
-async function getCart(req, res) {
+async function getCartProducts(req, res) {
     try {
         const consumerID = req.user.id;
         const userCart = await CartModel.findOne({ consumerID: consumerID });
-        if (userCart) {
-            return res.status(200).json(userCart.products);
+        var listOfCartProducts = [];
+        if (!userCart && userCart.products.length == 0) {
+            return res.status(200).json(listOfCartProducts);
         }
-        return res.status(404).json({ error: 'Cart not found' });
+        for (var i = 0; i <= userCart.products.length - 1; i++) {
+            const product = await ProductModel.findById(userCart.products[i].productID);
+            listOfCartProducts.push({
+                "product": product,
+                "quantity": userCart.products[i].quantity
+            });
+        }
+        return res.status(200).json(listOfCartProducts);
     } catch (error) {
         return res.status(500).json({ error: 'Internal server error' });
     }
@@ -102,4 +111,4 @@ async function getCartProductsIDs(req, res) {
 }
 
 
-module.exports = { addToCart, removeItemFromCart, getCart, clearCart, getCartProductsIDs };
+module.exports = { addToCart, removeItemFromCart, getCartProducts, clearCart, getCartProductsIDs };
