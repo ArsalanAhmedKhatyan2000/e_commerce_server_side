@@ -138,36 +138,36 @@ async function increaseCartItemQuantityByOne(req, res) {
     }
 }
 
-// async function decreaseCartItemQuantityByOne(req, res) {
-//     try {
-//         const consumerID = req.user.id;
-//         const productID = req.body.productID;
-//         const userCart = await CartModel.findOne({ consumerID: consumerID });
-//         if (!consumerID) {
-//             return res.status(400).json({ error: 'consumer ID is required' });
-//         }
-//         if (!productID) {
-//             return res.status(400).json({ error: 'Product ID is required' });
-//         }
-//         if (!userCart) {
-//             return res.status(404).json({ error: 'Cart not found' });
-//         }
-//         // Find the product in the cart
-//         const productIndex = userCart.products.findIndex((product) => product.productID === productID);
-//         if (productIndex === -1) {
-//             return res.status(404).json({ message: 'Product not found in the cart' });
-//         }
-//         if (userCart.products[productIndex].quantity == 1) {
-//             return res.status(400).json({ error: 'Product quantity should be atleast 1' });
-//         }
-//         // Decrease the quantity by one
-//         userCart.products[productIndex].quantity -= 1;
-//         // Save the updated cart
-//         await userCart.save();
-//         return res.status(200).json(userCart.products);
-//     } catch (error) {
-//         return res.status(500).json({ error: 'Internal server error' });
-//     }
-// }
+async function decreaseCartItemQuantityByOne(req, res) {
+    try {
+        const consumerID = req.user.id;
+        const productID = req.body.productID;
+        const userCart = await CartModel.findOne({ consumerID: consumerID });
+        if (!consumerID) {
+            return res.status(400).json({ error: 'consumer ID is required' });
+        }
+        if (!productID) {
+            return res.status(400).json({ error: 'Product ID is required' });
+        }
+        if (!userCart) {
+            return res.status(404).json({ error: 'Cart not found' });
+        }
+        // Find the product in the cart
+        const productIndex = userCart.products.findIndex((product) => product.productID === productID);
+        if (productIndex === -1) {
+            return res.status(404).json({ message: 'Product not found in the cart' });
+        }
+        if (userCart.products[productIndex].quantity == 1) {
+            return res.status(400).json({ error: 'Product quantity should be atleast 1' });
+        }
+        // Decrease the quantity by one
+        userCart.products[productIndex].quantity -= 1;
+        // Save the updated cart
+        await userCart.save();
+        return res.status(200).json(userCart.products);
+    } catch (error) {
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+}
 
 module.exports = { addToCart, removeItemFromCart, getCartProducts, clearCart, getCartProductsIDs, increaseCartItemQuantityByOne, decreaseCartItemQuantityByOne };
