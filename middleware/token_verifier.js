@@ -10,7 +10,7 @@ const verifyToken = (req, res, next) => {
         }
         const token = ensureToken.split(" ")[1];
         if (token) {
-            const isVerified = jwt.verify(token, "this is secret key");
+            const isVerified = jwt.verify(token, process.env.jwtSecretKey);
             if (isVerified) {
                 req.user = isVerified;
                 next();

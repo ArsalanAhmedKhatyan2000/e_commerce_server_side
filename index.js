@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const http = require('http');
 const cors = require('cors');
@@ -27,14 +28,13 @@ app.use('/order', ordersRoute);
 //DB connectivity
 dbConnectivity();
 
-const server = http.createServer(app);
+// const server = http.createServer(app);
 
 // const socketReal = new Server(server, { cors: { origin: "*", }, })
-
 
 // socketReal.on("connect", (socket) => {
 //     socketHelper(socket)
 // });
 
 //server
-server.listen(3000, () => { console.log("Server is running"); });
+app.listen(process.env.port || 5000, () => { console.log("Server is running"); });

@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const userModel = require('../models/user_model');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 async function signupUser(req, res) {
@@ -53,7 +53,7 @@ async function loginUser(req, res) {
                     type: existingUser.type,
                     fcmToken: existingUser.fcmToken,
                 },
-                    "this is secret key",
+                    process.env.jwtSecretKey,
                     // { expiresIn: "24h" }
                 );
                 return res.status(200).json({
