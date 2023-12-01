@@ -153,4 +153,20 @@ async function getFetauredProducts(req, res) {
         return res.status(500).json({ error: 'Internal server error' });
     }
 }
-module.exports = { addProduct, getAllProducts, deleteProduct, updateProduct, searchProducts, discountedProducts, getProductsByCategory, searchOptions, getFetauredProducts };
+
+async function getProductsByBrand(req, res) {
+    try {
+        const brand = req.params.brand;
+        if(brand==null){
+            return res.status(400).json({ error: "Brand is required" });
+        }        
+        let page = req.params.page ?? 1;
+        let limit = 10;
+        const listOfProducts = await ProductModel.find({ brand: { $eq: brand } }).skip((page * limit) - limit).limit(limit);;
+        return res.status(200).json(listOfProducts);
+    } catch (error) {
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+module.exports = { addProduct, getAllProducts, deleteProduct, updateProduct, searchProducts, discountedProducts, getProductsByCategory, searchOptions, getFetauredProducts,getProductsByBrand };
