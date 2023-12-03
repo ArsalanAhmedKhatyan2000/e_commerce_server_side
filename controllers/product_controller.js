@@ -89,6 +89,7 @@ async function updateProduct(req, res) {
 
 // }
 
+
 async function searchOptions(req, res) {
     try {
         const searchingText = req.params.searchingText;
@@ -158,9 +159,9 @@ async function getFetauredProducts(req, res) {
 async function getProductsByBrand(req, res) {
     try {
         const brand = req.params.brand;
-        if(brand==null){
+        if (brand == null) {
             return res.status(400).json({ error: "Brand is required" });
-        }        
+        }
         let page = req.params.page ?? 1;
         let limit = 10;
         const listOfProducts = await ProductModel.find({ brand: { $eq: brand } }).skip((page * limit) - limit).limit(limit);;
@@ -170,4 +171,4 @@ async function getProductsByBrand(req, res) {
     }
 }
 
-module.exports = { addProduct, getAllProducts, deleteProduct, updateProduct, searchProducts, discountedProducts, getProductsByCategory, searchOptions, getFetauredProducts,getProductsByBrand };
+module.exports = { addProduct, getAllProducts, deleteProduct, updateProduct, searchProducts, discountedProducts, getProductsByCategory, searchOptions, getFetauredProducts, getProductsByBrand };
