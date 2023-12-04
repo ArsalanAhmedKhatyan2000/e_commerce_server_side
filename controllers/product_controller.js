@@ -89,7 +89,6 @@ async function updateProduct(req, res) {
 
 // }
 
-
 async function searchOptions(req, res) {
     try {
         const searchingText = req.params.searchingText;
